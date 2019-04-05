@@ -1,0 +1,21 @@
+---
+title: Manipulando datos con dplyr
+author: Carlos Neftaly
+date: '2018-02-21'
+draft: yes
+slug: manipulando-datos-con-
+
+categories:
+  - R
+  - dplyr
+tags:
+  - R
+  - manage
+  - filtrar
+  
+---
+
+
+Los conjunto de datos -dataset en inglés- son una estructura fundamental en estadísitca y en _R_. De forma general, en éstos cada fila representa una observación o individuo y cada columna una variable, medida o característica de la observación. Dada la importancia de esta estructura,  se hace indispensable conocer las herramientas disponibles para un manejo eficiente. Para este fin, _R_ implementa de forma nativa funciones como $subset()$ y el uso de los operadores $[ $ y $ para extraer subconjutos (subset) desde los datos originales.
+
+

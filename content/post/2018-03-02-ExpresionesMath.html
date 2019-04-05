@@ -1,0 +1,85 @@
+---
+title: Uso de caracteres especiales en gráficos de R
+author: Carlos Neftaly
+date: '2018-03-02'
+slug: ExpresionesMath
+categories:
+  - R
+  - Gráficos
+tags:
+  - Plots
+---
+
+
+
+<ul>
+<li><strong>Número de palabras: 308</strong></li>
+<li><strong>Tiempo de lectura: ~ 1.5 minutos</strong></li>
+</ul>
+<p>Frecuentemente, la presentación gráfica de nuestros datos requiere el uso de caracteres especiales en las etiquetas, títulos y leyendas. Estos caracteres incluyen, entre otros, superíndices, subíndices, letras griegas y, para el caso particular de las ciencias biológicas, textos en cursiva para los <a href="http://es.wikipedia.org/wiki/Nomenclatura_binominal">nombres científicos</a>. En <code>R</code> esta labor resulta ser simple con el uso de la función <code>expression()</code> y siguiendo las funciones definidas en <code>demo(plotmath)</code> para anotación matemática.</p>
+<div id="superindices-subindices-en-etiquetas-y-titulos-usando-expression-y-paste" class="section level3">
+<h3>Superíndices, subíndices en etiquetas y títulos usando <code>expression()</code> y <code>paste()</code></h3>
+<p>Esta combinación es de gran utilidad cuando se mezcla texto plano con caracteres especiales en la misma etiqueta y/o título. Veamos un ejemplo:</p>
+<ol style="list-style-type: decimal">
+<li><code>ggplot2</code></li>
+</ol>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<pre><code>## Warning: pakke &#39;ggplot2&#39; blev bygget under R version 3.5.2</code></pre>
+<pre class="r"><code>library(ggsci)</code></pre>
+<pre><code>## Warning: pakke &#39;ggsci&#39; blev bygget under R version 3.5.2</code></pre>
+<pre class="r"><code>ggplot(wdata, aes(x=VD, log(VR), colour=VD))+geom_boxplot() + geom_jitter(width = 0.2)+ labs(x = expression(paste(&quot;NH&quot;[4]^+{}, &quot; (mgN/L)&quot;)),
+                  y = expression(paste(sqrt(UFC/cm^{2})))) + theme_bw() + scale_color_npg()</code></pre>
+<p><img src="/post/2018-03-02-ExpresionesMath_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ol start="2" style="list-style-type: decimal">
+<li><code>base</code></li>
+</ol>
+<pre class="r"><code>boxplot(log(VR)~VD, xlab=expression(paste(&quot;NH&quot;[4]^+{}, &quot; (mgN/L)&quot;)),
+     ylab=expression(paste(sqrt(UFC/cm^{2})))) </code></pre>
+<p><img src="/post/2018-03-02-ExpresionesMath_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="texto-en-cursiva-usando-expression-y-paste" class="section level3">
+<h3>Texto en <em>cursiva</em> usando <code>expression()</code> y <code>paste()</code></h3>
+<ol style="list-style-type: decimal">
+<li>Etiquetas de ejes</li>
+</ol>
+<pre class="r"><code>library(ggplot2)
+ggplot(wdata, aes(x=VD, log(VR), colour=VD))+geom_boxplot() + geom_jitter(width = 0.2)+  scale_color_npg() + labs(x = expression(paste(italic(&#39;B. amyloliquefaciens&#39;), &quot; FZB42&quot;)),
+                  y = expression(paste(sqrt(UFC/cm^{2})))) + theme_bw()</code></pre>
+<p><img src="/post/2018-03-02-ExpresionesMath_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Nombre de niveles</li>
+</ol>
+<p>Para solucionar este reto hay múltiples funciones, pero vamos a emplear el que a nuestra forma de ver resultar ser el más simple. Para esto crearemos un vector con las siguientes características:</p>
+<pre class="r"><code>etiqueta&lt;-c(expression(paste(italic(&#39;B. amyloliquefaciens&#39;),&#39; FZB42&#39;)), 
+             expression(paste(italic(&#39;P. fluorescens&#39;),&#39; CHAO&#39;)))</code></pre>
+<p>Ahora procedemos a graficar agregando el siguiente comando en <code>ggplot</code>: <code>scale_x_discrete(labels = etiqueta)</code></p>
+<pre class="r"><code>ggplot(wdata, aes(x=VD, log(VR), colour=VD))+geom_boxplot() + geom_jitter(width = 0.2)+  scale_color_npg() + labs(x = &#39;Cepa&#39;, y = expression(paste(sqrt(UFC/cm^{2})))) + theme_bw() + 
+      scale_x_discrete(labels = etiqueta)</code></pre>
+<p><img src="/post/2018-03-02-ExpresionesMath_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="caracteres-especiales-en-graficos-con-paneles" class="section level3">
+<h3>Caracteres especiales en gráficos con páneles</h3>
+<p>En <code>ggplot2()</code> la función <code>facet_grid()</code> provee una manera elegante para mostrar con claridad más información en un gráfico mediante páneles. Miremos un ejemplo incluido en el paquete (<a href="http://docs.ggplot2.org/0.9.3.1/facet_grid.html" class="uri">http://docs.ggplot2.org/0.9.3.1/facet_grid.html</a>) usando el conjuto de datos <code>mtcars</code>. Grafiquemos mpg (miles per gallon) vs wt (weight) y <code>facet</code> por cyl (numbre of cylinders).</p>
+<pre class="r"><code>library(ggplot2)
+qplot(wt, mpg, data = mtcars) + facet_grid(. ~ cyl)</code></pre>
+<p><img src="/post/2018-03-02-ExpresionesMath_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Ahora creemos un nueva variable <code>cyl2</code> donde renombraremos los niveles con algunos caracteres especiales:</p>
+<pre class="r"><code>mtcars$cyl2 &lt;- factor(mtcars$cyl, labels = c(&quot;delta^{15}*NO[3]^-{}&quot;, &quot;italic(&#39;B. amyloliquefaciens&#39;)&quot;, &quot;sqrt(x,y)&quot;))
+qplot(wt, mpg, data = mtcars) + facet_grid(. ~ cyl2)</code></pre>
+<p><img src="/post/2018-03-02-ExpresionesMath_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Para completar la etiqueta como deseamos, usamos <code>labeller = label_parsed</code>:</p>
+<pre class="r"><code>mtcars$cyl2 &lt;- factor(mtcars$cyl, labels = c(&quot;delta^{15}*NO[3]^-{}&quot;, &quot;italic(&#39;B. amyloliquefaciens&#39;)&quot;, &quot;sqrt(x,y)&quot;))
+qplot(wt, mpg, data = mtcars) + facet_grid(. ~ cyl2,
+                                           labeller = label_parsed)</code></pre>
+<p><img src="/post/2018-03-02-ExpresionesMath_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="anotaciones-sobre-el-grafico" class="section level3">
+<h3>Anotaciones sobre el gráfico</h3>
+<p>Sobre los gráficos se pueden agregar diferentes anotaciones especificando la posición y el contenido (<a href="http://docs.ggplot2.org/current/annotate.html" class="uri">http://docs.ggplot2.org/current/annotate.html</a>). Miremos un ejemplo:</p>
+<pre class="r"><code>library(ggplot2)
+ggplot(wdata, aes(x=VD, log(VR), colour=VD))+geom_boxplot() + geom_jitter(width = 0.2)+  scale_color_npg() + labs(x = &#39;Cepa&#39;, y = expression(paste(sqrt(UFC/cm^{2})))) + theme_bw() + 
+      scale_x_discrete(labels = etiqueta) + annotate(&quot;text&quot;, x=2, y=4, 
+                                   label=&quot;paste(italic(P) , \&quot; &lt; 0.0001\&quot;)&quot;, parse = TRUE,
+                                   size=5)</code></pre>
+<p><img src="/post/2018-03-02-ExpresionesMath_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>

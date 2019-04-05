@@ -1,0 +1,126 @@
+---
+title: Uso de caracteres especiales en gráficos de R
+author: Carlos Neftaly
+date: '2018-03-02'
+slug: ExpresionesMath
+categories:
+  - R
+  - Gráficos
+tags:
+  - Plots
+---
+
+
++ __Número de palabras: 308__
++ __Tiempo de lectura: ~ 1.5 minutos__
+
+Frecuentemente, la presentación gráfica de nuestros datos requiere el uso de caracteres especiales en las etiquetas, títulos y leyendas. Estos caracteres incluyen, entre otros, superíndices, subíndices, letras griegas y, para el caso particular de las ciencias biológicas, textos en cursiva para los [nombres científicos](http://es.wikipedia.org/wiki/Nomenclatura_binominal). En `R` esta labor resulta ser simple con el uso de la función `expression()` y siguiendo las funciones definidas en `demo(plotmath)` para anotación matemática.
+
+### Superíndices, subíndices en etiquetas y títulos  usando `expression()` y `paste()`
+
+Esta combinación es de gran utilidad cuando se mezcla texto plano con caracteres especiales en la misma etiqueta y/o título. Veamos un ejemplo: 
+
+ 01. `ggplot2`
+ 
+```{r include=FALSE}
+wdata = data.frame(
+   VD = factor(rep(c("Nivel 1", "Nivel 2"), each=20)),
+   VR = c(rnorm(20, 52), rnorm(20, 58)))
+attach(wdata)
+```
+ 
+```{r,fig.align='center'}
+library(ggplot2)
+library(ggsci)
+
+ggplot(wdata, aes(x=VD, log(VR), colour=VD))+geom_boxplot() + geom_jitter(width = 0.2)+ labs(x = expression(paste("NH"[4]^+{}, " (mgN/L)")),
+                  y = expression(paste(sqrt(UFC/cm^{2})))) + theme_bw() + scale_color_npg()
+```
+
+02. `base`
+
+```{r}
+boxplot(log(VR)~VD, xlab=expression(paste("NH"[4]^+{}, " (mgN/L)")),
+     ylab=expression(paste(sqrt(UFC/cm^{2})))) 
+
+```
+
+### Texto en _cursiva_ usando `expression()` y `paste()`
+
+1. Etiquetas de ejes
+```{r, fig.align='center'}
+library(ggplot2)
+ggplot(wdata, aes(x=VD, log(VR), colour=VD))+geom_boxplot() + geom_jitter(width = 0.2)+  scale_color_npg() + labs(x = expression(paste(italic('B. amyloliquefaciens'), " FZB42")),
+                  y = expression(paste(sqrt(UFC/cm^{2})))) + theme_bw()
+```
+
+
+
+2. Nombre de niveles 
+
+Para solucionar este reto hay múltiples funciones, pero vamos a emplear el que a nuestra forma de ver resultar ser el más simple. Para esto crearemos un vector con las siguientes características:
+
+```{r}
+
+etiqueta<-c(expression(paste(italic('B. amyloliquefaciens'),' FZB42')), 
+             expression(paste(italic('P. fluorescens'),' CHAO')))
+
+```
+
+Ahora procedemos a graficar agregando el siguiente comando en `ggplot`:  `scale_x_discrete(labels = etiqueta)`
+
+```{r, fig.align='center'}
+ggplot(wdata, aes(x=VD, log(VR), colour=VD))+geom_boxplot() + geom_jitter(width = 0.2)+  scale_color_npg() + labs(x = 'Cepa', y = expression(paste(sqrt(UFC/cm^{2})))) + theme_bw() + 
+      scale_x_discrete(labels = etiqueta)
+```
+
+### Caracteres especiales en gráficos con páneles
+
+
+En `ggplot2()` la función `facet_grid()` provee una manera elegante para mostrar con claridad más información en un gráfico mediante páneles. Miremos un ejemplo incluido en el paquete (http://docs.ggplot2.org/0.9.3.1/facet_grid.html) usando el conjuto de datos `mtcars`. Grafiquemos mpg (miles per gallon) vs wt (weight) y `facet` por cyl (numbre of cylinders).
+
+
+```{r}
+library(ggplot2)
+qplot(wt, mpg, data = mtcars) + facet_grid(. ~ cyl)
+```
+
+
+Ahora creemos un nueva variable `cyl2` donde renombraremos los niveles con algunos caracteres especiales: 
+
+```{r}
+mtcars$cyl2 <- factor(mtcars$cyl, labels = c("delta^{15}*NO[3]^-{}", "italic('B. amyloliquefaciens')", "sqrt(x,y)"))
+qplot(wt, mpg, data = mtcars) + facet_grid(. ~ cyl2)
+```
+
+Para completar la etiqueta como deseamos, usamos `labeller = label_parsed`: 
+
+```{r}
+mtcars$cyl2 <- factor(mtcars$cyl, labels = c("delta^{15}*NO[3]^-{}", "italic('B. amyloliquefaciens')", "sqrt(x,y)"))
+qplot(wt, mpg, data = mtcars) + facet_grid(. ~ cyl2,
+                                           labeller = label_parsed)
+```
+
+
+### Anotaciones sobre el gráfico 
+
+Sobre los gráficos se pueden agregar diferentes anotaciones especificando la posición y el contenido (http://docs.ggplot2.org/current/annotate.html). Miremos un ejemplo: 
+
+
+
+
+```{r}
+
+library(ggplot2)
+ggplot(wdata, aes(x=VD, log(VR), colour=VD))+geom_boxplot() + geom_jitter(width = 0.2)+  scale_color_npg() + labs(x = 'Cepa', y = expression(paste(sqrt(UFC/cm^{2})))) + theme_bw() + 
+      scale_x_discrete(labels = etiqueta) + annotate("text", x=2, y=4, 
+                                   label="paste(italic(P) , \" < 0.0001\")", parse = TRUE,
+                                   size=5)
+```
+
+
+
+
+
+
+

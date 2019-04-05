@@ -1,0 +1,28 @@
+---
+title: 'Test de Kruskal - Wallis: Una alternativa no paramétrica al ANOVA simple'
+author: 'Carlos Neftaly '
+date: '2018-11-27'
+slug: test-de-kruskal-wallis
+categories:
+  - R
+  - Inferencia
+tags:
+  - Inferencia
+subtitle: ''
+---
+
+Un problema común en el uso de métodos esadísitco clásico es la fata de normalidad de los datos. Este supuesto, verificado mediante pruebas como Shapiro - Wills o Kolomogorv - Sminrnov,  es requerido para la mayoría de las pruebas y, para algunos casos, resulta ser determinante su cumplimiento. 
+
+Para este escenario, la prueba de `Kruskal-Wallis`, también conocido como _test H_, resulta ser una buena alternativa no-paramétrica para la prueba ANOVA simple o de una vía.
+
+
+
+
+
+La prueba de `Kruskal-Wallis`, también conocido como _test H_, es la alternativa no paramétrica a la prueba ANOVA simple o de una vía. 
+
+$$H=\frac{12}{N(N+1)} \sum_{i=1}^{k}\frac{R^{2}_i}{n_i}-3(N+1)$$
+
+
+
+Se trata de una extensión del test de Mann-Whitney para más de dos grupos. Se trata por lo tanto de un test que emplea rangos para contrastar la hipótesis de que k muestras han sido obtenidas de una misma población.
